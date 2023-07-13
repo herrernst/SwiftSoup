@@ -82,7 +82,14 @@ extension Element {
                     // TODO: is parent necessary? apple's markdown converter does it this way
                     let listItemIndex: Int = (try? element.elementSiblingIndex()) ?? 0
                     attributes.presentationIntent = PresentationIntent.init(.listItem(ordinal: listItemIndex), identity: identityCounter.next(), parent: visitorStack.last?.attributes?.presentationIntent)
-                    // TODO: a; dd, dl, dt; table stuff?
+                case "a":
+                    let hrefAttr = node.getAttributes()?.first(where: { attribute in
+                        attribute.key == "href"
+                    })
+                    if let href = hrefAttr?.value {
+                        attributes.link = URL(string: href)
+                    }
+                    // TODO: dd, dl, dt; table stuff?
                 default:
                     logger.debug("ignoring element \(node.nodeName())")
                 }
