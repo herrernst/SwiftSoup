@@ -51,10 +51,10 @@ extension Element {
 //                    attributes.inlinePresentationIntent = .inlineHTML
 //                }
                 switch node.nodeName() {
-                case "b":
-                    attributes.inlinePresentationIntent = .stronglyEmphasized
-                case "i":
+                case "i", "em":
                     attributes.inlinePresentationIntent = .emphasized
+                case "b", "strong":
+                    attributes.inlinePresentationIntent = .stronglyEmphasized
                 case "p":
                     attributes.presentationIntent = PresentationIntent.init(.paragraph, identity: identityCounter.next())
                 case "ul":
