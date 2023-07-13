@@ -40,6 +40,11 @@ extension Element {
         public override func head(_ node: Node, _ depth: Int) {
             logger.debug("enter nodename: \(node.nodeName())")
             var visitorContext = VisitorContext(tagName: node.nodeName(), depth: depth, currentStringOffset: accum.xlength)
+            if let element = (node as? Element) {
+                if node.nodeName() == "li" {
+                    accum.append("•\t") // TODO: look up how apple does it
+                }
+            }
             super.head(node, depth)
             if let element = (node as? Element) {
                 logger.debug("node is also element: \(element._tag.getName())")
@@ -95,6 +100,9 @@ extension Element {
             // nodeName can also be "#text" and "#document"
             if let element = (node as? Element) {
                 logger.debug("node is also element: \(element._tag.getName())")
+                if element.isBlock() {
+                    accum.append(String(Character(Unicode.Scalar(0x2029 as UInt16)!))) // or "\n\r"
+                }
                 if let attributes = popped.attributes {
                     let end = accum.xlength
                     let range = popped.currentStringOffset...end
