@@ -74,8 +74,9 @@ extension Element {
                 case "h6":
                     attributes.presentationIntent = PresentationIntent.init(.header(level: 6), identity: identityCounter.next())
                 case "li":
-                    // TODO: count list items; is parent necessary? apple's markdown converter does it this way
-                    attributes.presentationIntent = PresentationIntent.init(.listItem(ordinal: 1), identity: identityCounter.next(), parent: visitorStack.last?.attributes?.presentationIntent)
+                    // TODO: is parent necessary? apple's markdown converter does it this way
+                    let listItemIndex: Int = (try? element.elementSiblingIndex()) ?? 0
+                    attributes.presentationIntent = PresentationIntent.init(.listItem(ordinal: listItemIndex), identity: identityCounter.next(), parent: visitorStack.last?.attributes?.presentationIntent)
                     // TODO: a; dd, dl, dt; table stuff?
                 default:
                     logger.debug("ignoring element \(node.nodeName())")
