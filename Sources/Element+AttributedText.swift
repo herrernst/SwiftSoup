@@ -50,28 +50,37 @@ extension Element {
 //                } else {
 //                    attributes.inlinePresentationIntent = .inlineHTML
 //                }
-                if node.nodeName() == "b" {
+                switch node.nodeName() {
+                case "b":
                     attributes.inlinePresentationIntent = .stronglyEmphasized
-                }
-                if node.nodeName() == "i" {
+                case "i":
                     attributes.inlinePresentationIntent = .emphasized
-                }
-                if node.nodeName() == "p" {
+                case "p":
                     attributes.presentationIntent = PresentationIntent.init(.paragraph, identity: identityCounter.next())
-                }
-                if node.nodeName() == "ul" {
+                case "ul":
                     attributes.presentationIntent = PresentationIntent.init(.unorderedList, identity: identityCounter.next())
-                }
-                if node.nodeName() == "ol" {
+                case "ol":
                     attributes.presentationIntent = PresentationIntent.init(.orderedList, identity: identityCounter.next())
-                }
-                if node.nodeName() == "h1" {
+                case "h1":
                     attributes.presentationIntent = PresentationIntent.init(.header(level: 1), identity: identityCounter.next())
-                }
-                if node.nodeName() == "li" {
-                    // TODO: count list items
+                case "h2":
+                    attributes.presentationIntent = PresentationIntent.init(.header(level: 2), identity: identityCounter.next())
+                case "h3":
+                    attributes.presentationIntent = PresentationIntent.init(.header(level: 3), identity: identityCounter.next())
+                case "h4":
+                    attributes.presentationIntent = PresentationIntent.init(.header(level: 4), identity: identityCounter.next())
+                case "h5":
+                    attributes.presentationIntent = PresentationIntent.init(.header(level: 5), identity: identityCounter.next())
+                case "h6":
+                    attributes.presentationIntent = PresentationIntent.init(.header(level: 6), identity: identityCounter.next())
+                case "li":
+                    // TODO: count list items; is parent necessary? apple's markdown converter does it this way
                     attributes.presentationIntent = PresentationIntent.init(.listItem(ordinal: 1), identity: identityCounter.next(), parent: visitorStack.last?.attributes?.presentationIntent)
+                    // TODO: a; dd, dl, dt; table stuff?
+                default:
+                    logger.debug("ignoring element \(node.nodeName())")
                 }
+
                 visitorContext.attributes = attributes
             }
             visitorStack.append(visitorContext)
@@ -82,7 +91,7 @@ extension Element {
             let popped = visitorStack.popLast()!
             assert(popped.tagName == node.nodeName())
             super.tail(node, depth)
-            // nodeName can also be #text and #document
+            // nodeName can also be "#text" and "#document"
             if let element = (node as? Element) {
                 logger.debug("node is also element: \(element._tag.getName())")
                 if let attributes = popped.attributes {
